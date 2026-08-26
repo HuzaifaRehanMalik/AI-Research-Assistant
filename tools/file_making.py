@@ -1,17 +1,61 @@
-from agents import function_tool
 from pathlib import Path
+
+from agents import function_tool
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+CREATED_FILES_DIR = BASE_DIR / "createdFile"
+
+CREATED_FILES_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
 
 
 @function_tool
-def file_tool(content: str, fileName: str):
-    """Create a file only inside the createdFile folder."""
+def file_tool(
+    content: str,
+    fileName: str,
+):
+    """
+    Create a file inside createdFile.
 
-    base_folder = Path("createdFile")
-    base_folder.mkdir(exist_ok=True)
+    Files cannot be created outside the
+    createdFile directory.
+    """
 
-    file_path = base_folder / Path(fileName).name
+    if not fileName:
+        return "Error: fileName cannot be empty."
 
-    with open(file_path, "w", encoding="utf-8") as file:
-        file.write(content)
+    safe_name = Path(fileName).name
 
-    return f"File created successfully: {file_path}"
+    if safe_name in {
+        "",
+        ".",
+        "..",
+    }:
+        return "Error: invalid file name."
+
+    file_path = CREATED_FILES_DIR / safe_name
+
+    try:
+
+        with open(
+            file_path,
+            "w",
+            encoding="utf-8",
+        ) as file:
+
+            file.write(content)
+
+        return (
+            f"File created successfully: "
+            f"createdFile/{safe_name}"
+        )
+
+    except Exception as error:
+
+        return (
+            f"Failed to create file: {error}"
+        )

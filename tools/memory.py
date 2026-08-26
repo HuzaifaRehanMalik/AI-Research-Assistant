@@ -1,16 +1,15 @@
 from database import get_connection
 
 
-def create_session(title: str = "New Chat") -> str:
-    """
-    Create a new chat session.
-    Returns the session ID.
-    """
+def create_session(title="New Chat"):
+    """Create a new chat session."""
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
+    connection = get_connection()
 
-            cur.execute(
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
                 """
                 INSERT INTO sessions (title)
                 VALUES (%s)
@@ -19,22 +18,65 @@ def create_session(title: str = "New Chat") -> str:
                 (title,),
             )
 
-            session_id = cur.fetchone()[0]
+            session_id = cursor.fetchone()[0]
 
-        conn.commit()
+        connection.commit()
 
-    return str(session_id)
+        return session_id
+
+    finally:
+        connection.close()
 
 
-def save_message(session_id: str, role: str, content: str):
-    """
-    Save a chat message.
-    """
+def get_sessions():
+    """Return all chat sessions, newest first."""
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
+    connection = get_connection()
 
-            cur.execute(
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    title,
+                    created_at,
+                    updated_at
+                FROM sessions
+                ORDER BY updated_at DESC;
+                """
+            )
+
+            rows = cursor.fetchall()
+
+            return [
+                {
+                    "id": row[0],
+                    "title": row[1],
+                    "created_at": row[2],
+                    "updated_at": row[3],
+                }
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
+
+
+def save_message(
+    session_id,
+    role,
+    content,
+):
+    """Save a message to a chat session."""
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
                 """
                 INSERT INTO messages (
                     session_id,
@@ -50,74 +92,95 @@ def save_message(session_id: str, role: str, content: str):
                 ),
             )
 
-        conn.commit()
-
-
-def load_history(session_id: str):
-    """
-    Load conversation history for an OpenAI Agent.
-    """
-
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-
-            cur.execute(
+            cursor.execute(
                 """
-                SELECT role, content
-                FROM messages
-                WHERE session_id = %s
-                ORDER BY created_at ASC;
+                UPDATE sessions
+                SET updated_at = NOW()
+                WHERE id = %s;
                 """,
                 (session_id,),
             )
 
-            rows = cur.fetchall()
+        connection.commit()
 
-    history = []
-
-    for role, content in rows:
-
-        history.append(
-            {
-                "role": role,
-                "content": content,
-            }
-        )
-
-    return history
+    finally:
+        connection.close()
 
 
-def list_sessions():
-    """
-    List all chat sessions.
-    """
+def load_history(session_id):
+    """Load all messages for a chat."""
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
+    connection = get_connection()
 
-            cur.execute(
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
                 """
                 SELECT
-                    id,
-                    title,
-                    created_at
-                FROM sessions
-                ORDER BY created_at DESC;
-                """
+                    role,
+                    content
+                FROM messages
+                WHERE session_id = %s
+                ORDER BY id ASC;
+                """,
+                (session_id,),
             )
 
-            return cur.fetchall()
+            rows = cursor.fetchall()
+
+            return [
+                {
+                    "role": row[0],
+                    "content": row[1],
+                }
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
 
 
-def delete_session(session_id: str):
-    """
-    Delete a chat session.
-    """
+def update_session_title(
+    session_id,
+    title,
+):
+    """Update the title of a chat."""
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
+    connection = get_connection()
 
-            cur.execute(
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
+                """
+                UPDATE sessions
+                SET
+                    title = %s,
+                    updated_at = NOW()
+                WHERE id = %s;
+                """,
+                (
+                    title,
+                    session_id,
+                ),
+            )
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+
+def delete_session(session_id):
+    """Delete a chat and all of its messages."""
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            cursor.execute(
                 """
                 DELETE FROM sessions
                 WHERE id = %s;
@@ -125,27 +188,25 @@ def delete_session(session_id: str):
                 (session_id,),
             )
 
-        conn.commit()
+        connection.commit()
+
+    finally:
+        connection.close()
 
 
-def rename_session(session_id: str, new_title: str):
-    """
-    Rename a chat session.
-    """
+def rename_chat(
+    session_id,
+    title,
+):
+    """Rename an existing chat."""
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
+    update_session_title(
+        session_id,
+        title,
+    )
 
-            cur.execute(
-                """
-                UPDATE sessions
-                SET title = %s
-                WHERE id = %s;
-                """,
-                (
-                    new_title,
-                    session_id,
-                ),
-            )
 
-        conn.commit()
+def delete_chat(session_id):
+    """Delete an existing chat."""
+
+    delete_session(session_id)

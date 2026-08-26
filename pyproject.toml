@@ -15,6 +15,7 @@ dependencies = [
     "ddgs>=9.5.5",
     "psycopg[binary]>=3.2.9",
     "rich>=14.0.0",
+    "streamlit>=1.62.0",
 ]
 
 [tool.uv]
