@@ -1,0 +1,21 @@
+[project]
+name = "scraping-agent"
+version = "0.1.0"
+description = "AI Research CLI Agent with Web Search, Web Scraping, and Neon PostgreSQL Memory"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "openai-agents>=0.2.8",
+    "openai>=1.108.0",
+    "python-dotenv>=1.1.0",
+    "httpx>=0.28.1",
+    "beautifulsoup4>=4.13.4",
+    "trafilatura>=2.0.0",
+    "ddgs>=9.5.5",
+    "psycopg[binary]>=3.2.9",
+    "rich>=14.0.0",
+]
+
+[tool.uv]
+package = false
