@@ -1,0 +1,19 @@
+# AI & Agent Framework
+openai-agents>=0.2.8
+openai>=1.108.0
+
+# Environment Configuration
+python-dotenv>=1.1.0
+
+# Web Search & Web Scraping
+ddgs>=9.5.5
+httpx>=0.28.1
+beautifulsoup4>=4.13.4
+trafilatura>=2.0.0
+
+# Database (PostgreSQL)
+psycopg[binary]>=3.2.9
+
+# Terminal Formatting / UI
+rich>=14.0.0
+
