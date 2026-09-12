@@ -1,12 +1,11 @@
 import os
 
-from dotenv import load_dotenv
 from agents import Agent
+from dotenv import load_dotenv
 
 from .file_creation_agent import file_creation_agent
 from .web_scraper_agent import web_scraper_agent
 from .web_search_agent import web_search_agent
-
 
 load_dotenv()
 
@@ -18,9 +17,7 @@ MODEL = os.getenv(
 
 
 if not os.getenv("OPENAI_API_KEY"):
-    raise ValueError(
-        "OPENAI_API_KEY is missing from .env"
-    )
+    raise ValueError("OPENAI_API_KEY is missing from .env")
 
 
 research_agent = Agent(

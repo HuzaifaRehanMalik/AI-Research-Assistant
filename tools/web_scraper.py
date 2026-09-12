@@ -17,12 +17,9 @@ def scrape_webpage(url: str) -> str:
     print(f"[SCRAPER] {url}")
 
     try:
-
         response = httpx.get(
             url,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
+            headers={"User-Agent": "Mozilla/5.0"},
             timeout=30,
             follow_redirects=True,
         )
@@ -40,11 +37,9 @@ def scrape_webpage(url: str) -> str:
         )
 
         if not extracted:
-
             return "No readable content could be extracted."
 
         return extracted
 
-    except Exception as e:
-
-        return f"Web scraping failed:\n{str(e)}"
+    except Exception as e:  # noqa: BLE001 - tool returns scraping errors to the agent.
+        return f"Web scraping failed:\n{e!s}"

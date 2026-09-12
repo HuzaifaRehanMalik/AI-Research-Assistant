@@ -1,11 +1,10 @@
 import asyncio
-from dotenv import load_dotenv
 
 from agents import Runner
+from dotenv import load_dotenv
 
-from agent import research_agent
+from core_agents.agent import research_agent
 from database import initialize_database
-
 from tools.memory import (
     create_session,
     load_history,
@@ -31,7 +30,6 @@ async def chat():
     print(f"Session ID: {session_id}\n")
 
     while True:
-
         user_input = input("You: ").strip()
 
         if not user_input:
@@ -42,7 +40,6 @@ async def chat():
             break
 
         try:
-
             # Save user message
             save_message(
                 session_id=session_id,
@@ -67,10 +64,8 @@ async def chat():
             answer = ""
 
             async for event in stream.stream_events():
-
                 # Stream text tokens
                 if event.type == "raw_response_event":
-
                     data = getattr(event, "data", None)
 
                     if hasattr(data, "delta"):
@@ -79,7 +74,6 @@ async def chat():
 
                 # Optional: display tool usage
                 elif event.type == "run_item_stream_event":
-
                     item = getattr(event, "item", None)
 
                     if item:
@@ -98,8 +92,9 @@ async def chat():
             print("\n\nInterrupted.")
             break
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - CLI boundary reports all agent failures.
             print(f"\n❌ Error: {e}\n")
+
 
 if __name__ == "__main__":
     asyncio.run(chat())

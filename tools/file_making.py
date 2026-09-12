@@ -2,7 +2,6 @@ from pathlib import Path
 
 from agents import function_tool
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 CREATED_FILES_DIR = BASE_DIR / "createdFile"
@@ -40,22 +39,14 @@ def file_tool(
     file_path = CREATED_FILES_DIR / safe_name
 
     try:
-
         with open(
             file_path,
             "w",
             encoding="utf-8",
         ) as file:
-
             file.write(content)
 
-        return (
-            f"File created successfully: "
-            f"createdFile/{safe_name}"
-        )
+        return f"File created successfully: createdFile/{safe_name}"
 
-    except Exception as error:
-
-        return (
-            f"Failed to create file: {error}"
-        )
+    except Exception as error:  # noqa: BLE001 - tool returns creation errors to the agent.
+        return f"Failed to create file: {error}"

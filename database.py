@@ -3,7 +3,6 @@ import os
 import psycopg
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 
@@ -15,14 +14,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 if not DATABASE_URL:
-    raise ValueError(
-        "DATABASE_URL is missing from your .env file."
-    )
+    raise ValueError("DATABASE_URL is missing from your .env file.")
 
 
 # =========================================================
 # DATABASE CONNECTION
 # =========================================================
+
 
 def get_connection():
     """
@@ -39,6 +37,7 @@ def get_connection():
 # INITIALIZE DATABASE
 # =========================================================
 
+
 def initialize_database():
     """
     Create the required tables.
@@ -50,9 +49,7 @@ def initialize_database():
     connection = get_connection()
 
     try:
-
         with connection.cursor() as cursor:
-
             # =================================================
             # SESSIONS TABLE
             # =================================================
@@ -143,11 +140,9 @@ def initialize_database():
         connection.commit()
 
     except Exception:
-
         connection.rollback()
 
         raise
 
     finally:
-
         connection.close()

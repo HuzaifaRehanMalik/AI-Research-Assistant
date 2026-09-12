@@ -1,6 +1,7 @@
 import json
-from ddgs import DDGS
+
 from agents import function_tool
+from ddgs import DDGS
 
 
 @function_tool
@@ -19,7 +20,6 @@ def web_search(query: str) -> str:
     print(f"[WEB SEARCH] {query}")
 
     try:
-
         with DDGS() as ddgs:
             results = list(
                 ddgs.text(
@@ -34,7 +34,6 @@ def web_search(query: str) -> str:
         cleaned_results = []
 
         for result in results:
-
             cleaned_results.append(
                 {
                     "title": result.get("title"),
@@ -48,6 +47,5 @@ def web_search(query: str) -> str:
             indent=2,
         )
 
-    except Exception as e:
-
-        return f"Web search failed:\n{str(e)}"
+    except Exception as e:  # noqa: BLE001 - tool returns search errors to the agent.
+        return f"Web search failed:\n{e!s}"

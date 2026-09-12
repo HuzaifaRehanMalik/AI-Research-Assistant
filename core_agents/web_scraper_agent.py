@@ -1,10 +1,9 @@
 import os
 
-from dotenv import load_dotenv
 from agents import Agent
+from dotenv import load_dotenv
 
 from tools.web_scraper import scrape_webpage
-
 
 load_dotenv()
 

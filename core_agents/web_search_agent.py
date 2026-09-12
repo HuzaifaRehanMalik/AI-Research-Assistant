@@ -1,10 +1,9 @@
 import os
 
-from dotenv import load_dotenv
 from agents import Agent
+from dotenv import load_dotenv
 
 from tools.web_search import web_search
-
 
 load_dotenv()
 

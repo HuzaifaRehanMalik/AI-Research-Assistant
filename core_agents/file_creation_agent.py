@@ -1,10 +1,9 @@
 import os
 
-from dotenv import load_dotenv
 from agents import Agent
+from dotenv import load_dotenv
 
 from tools.file_making import file_tool
-
 
 load_dotenv()
 

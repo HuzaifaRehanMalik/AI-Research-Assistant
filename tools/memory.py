@@ -8,7 +8,6 @@ def create_session(title="New Chat"):
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 INSERT INTO sessions (title)
@@ -35,7 +34,6 @@ def get_sessions():
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 SELECT
@@ -75,7 +73,6 @@ def save_message(
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 INSERT INTO messages (
@@ -114,7 +111,6 @@ def load_history(session_id):
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 SELECT
@@ -151,7 +147,6 @@ def update_session_title(
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 UPDATE sessions
@@ -179,7 +174,6 @@ def delete_session(session_id):
 
     try:
         with connection.cursor() as cursor:
-
             cursor.execute(
                 """
                 DELETE FROM sessions
